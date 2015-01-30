@@ -25,8 +25,10 @@ class LogFile:
 	>>> test.bytes
 	'2326'
 	"""
+	attrs = ['remotehost', 'logname', 'username', 'date', 'request', 'status', 'bytes']
 	def __init__(self, string):
 		self.string = string
+
 
 	@property
 	def remotehost(self):
@@ -82,10 +84,25 @@ class LogFile:
 
 	@property
 	def bytes(self):
-		bytes = re.search('(\d+)$', self.string)
+		bytes = re.search('\s(\d+)\\n$', self.string)
 		if bytes != None:
 			bytes = bytes.group(1)
 		return bytes
+
+class QLog(LogFile):
+	attrs = ['remotehost', 'date', 'request']
+	search_engine_list = ['Safari', 'Mozilla', 'Chrome']
+	@property
+	def request(self):
+		for eng in self.search_engine_list:
+			 temp = re.search('\"('+ eng +'[\w\W]+)\"', self.string)
+			 if temp:
+			 	request = temp
+		if request != None:
+			request = request.group(1)
+		return request
+
+
 
 
 
