@@ -3,27 +3,24 @@ from logclass import *
 import json
 
 
-#Specifies what type of log to analyze
-logtype = QLog
-
 import sys
 info = sys.argv[1]
 f = open(info, 'r')
 data = f.readlines()
 f.close()
-filename = sys.argv[2]
-new = open(filename, "w")
-
+jsonD = {}
 i = 1
 for dataline in data:
-	jsonD = {}
-	log = logtype(dataline)
-	for attr in log.attrs:
-		result = eval('log.' + attr)
-		if result:
-			jsonD[attr] = result
-	# new.write(str(i) + '. ' + json.dump(jsonD, 'fp') + '\n')
-	new.write(str(i) + '. ' + str(jsonD) + '\n' +'\n')
+	jsonD[i] = dataline
 	i+=1
 
-new.close()
+
+result = json.dumps(jsonD, indent = 4, separators=('\n', ': '))
+try:
+    outputfile = open("output.txt", "w")
+    try:
+        outputfile.write(result)
+    finally:
+        outputfile.close()
+except IOError:
+    pass
